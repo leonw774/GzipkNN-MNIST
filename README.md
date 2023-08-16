@@ -18,7 +18,7 @@ See `cm/` for confusion matrices
 
 ### Using PNG format
 
-<!-- -->     | k=2 | k=8 | k=32
+PNG          | k=2 | k=8 | k=32
 -------------|-----|-----|------
 concat: hori |32.8%|38.3%|41.8%
 concat: vert |30.6%|33.1%|33.9%
@@ -26,7 +26,7 @@ concat: vert |30.6%|33.1%|33.9%
 
 ### Using QOI format
 
-<!-- -->     | k=2 | k=8 | k=32
+QOI          | k=2 | k=8 | k=32
 -------------|-----|-----|------
 concat: hori |33.7%|36.9%|39.0%
 concat: vert |47.0%|54.6%|58.5%
