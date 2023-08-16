@@ -8,6 +8,10 @@ This little project is inspired by "“Low-Resource” Text Classification: A Pa
   - PNG
   - QOI
 
+- Use greyscale or binary image
+  - Greyscale: original
+  - Binary: if pixel value > 0, then it become 255
+
 - Using kNN with $k = 2, 8, 32$
 
 - Concatenate two images horizontally or vertically
@@ -18,18 +22,28 @@ See `cm/` for confusion matrices
 
 ### Using PNG format
 
-PNG          | k=2 | k=8 | k=32
--------------|-----|-----|------
+PNG-Greyscale| k=2 | k=8 | k=32
+-------------|-----|-----|-----
 concat: hori |32.8%|38.3%|41.8%
 concat: vert |30.6%|33.1%|33.9%
+
+PNG-Binary   | k=2 | k=8 | k=32
+-------------|-----|-----|-----
+concat: hori |||
+concat: vert |||
 
 
 ### Using QOI format
 
-QOI          | k=2 | k=8 | k=32
--------------|-----|-----|------
+QOI-Greyscale| k=2 | k=8 | k=32
+-------------|-----|-----|-----
 concat: hori |33.7%|36.9%|39.0%
 concat: vert |47.0%|54.6%|58.5%
+
+QOI-Binary   | k=2 | k=8 | k=32
+-------------|-----|-----|-----
+concat: hori |||
+concat: vert |||
 
 
 - On image concatenation:

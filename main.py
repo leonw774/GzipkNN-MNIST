@@ -39,6 +39,10 @@ parser.add_argument(
     help='0 is vertical concatenation; 1 is horizontal.'
 )
 parser.add_argument(
+    '--binary', '-b',
+    action='store_true'
+)
+parser.add_argument(
     '--confusion-matrix', '--cm',
     action='store_true'
 )
@@ -51,6 +55,8 @@ INIT_K = args.k
 USE_QOI = (args.format == 'qoi')
 
 CONCAT_DIM = args.concat_dim
+
+USE_BINARY_IMG = args.binary
 
 
 def load_dataset(path, is_image, num_samples):
@@ -139,11 +145,10 @@ def buf2grayscale(buf):
 
 
 def buf2rgb(buf):
-    return np.pad(
-        np.frombuffer(buf, dtype=np.uint8).copy().reshape(28, 28, 1),
-        [(0, 0), (0, 0), (0, 2)],
-        mode='constant'
-    )
+    arr = np.frombuffer(buf, dtype=np.uint8).copy().reshape(28, 28, 1)
+    if USE_BINARY_IMG:
+        arr[arr > 0] = 255
+    return np.pad(arr, [(0, 0), (0, 0), (0, 2)], mode='constant')
 
 def test(train_image):
     aa3 = buf2rgb(train_image)
@@ -169,26 +174,28 @@ def main():
 
     # test(train_images[0])
 
+    pil_mode = '1' if USE_BINARY_IMG else 'L'
+
     train_images = [
         qoi.encode(buf2rgb(x))
         if USE_QOI else
-        Image.frombytes('L', (28, 28), x)
+        Image.frombytes(pil_mode, (28, 28), x)
         for x in train_images
     ]
     train_labels = np.array([
-        int.from_bytes(l, 'little')
-        for l in train_labels
+        int.from_bytes(y, 'little')
+        for y in train_labels
     ])
 
     test_images = [
         qoi.encode(buf2rgb(x))
         if USE_QOI else
-        Image.frombytes('L', (28, 28), x)
+        Image.frombytes(pil_mode, (28, 28), x)
         for x in test_images
     ]
     test_labels = np.array([
-        int.from_bytes(l, 'little')
-        for l in test_labels
+        int.from_bytes(y, 'little')
+        for y in test_labels
     ])
     # print(train_labels[0], test_labels[0])
 
@@ -230,7 +237,7 @@ def main():
             confusion_mat[pred, true] += 1
         cm_df = pd.DataFrame(confusion_mat)
         seaborn.heatmap(cm_df, annot=True)
-        cm_name = f'cm/result_{args.format}_k={INIT_K}_concat-dim={CONCAT_DIM}_acc={acc:.3f}.png'
+        cm_name = f'cm/result_{args.format}{pil_mode}_k={INIT_K}_concat-dim={CONCAT_DIM}_acc={acc:.3f}.png'
         plt.savefig(cm_name)
 
     return 0
