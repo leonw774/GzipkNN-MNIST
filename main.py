@@ -69,7 +69,7 @@ def load_dataset(path, is_image, num_samples):
 
 def ncd(arg):
     x1, C1, x2, C2 = arg
-    
+
     if USE_QOI:
         a1 = qoi.decode(x1)
         a2 = qoi.decode(x2)
@@ -82,10 +82,10 @@ def ncd(arg):
         x12.paste(x2, (28, 0) if CONCAT_DIM == 0 else (0, 28))
         x12.save(bio, 'png')
         C12 = len(bio.getvalue())
-    
+
     # print(C1, C2, C12)
     # print((C12 - min(C1, C2)) / max(C1, C2))
-    return (C12 - min(C1, C2)) / max(C1, C2) 
+    return (C12 - min(C1, C2)) / max(C1, C2)
 
 
 def parallel(func, arg_list):
@@ -145,6 +145,21 @@ def buf2rgb(buf):
         mode='constant'
     )
 
+def test(train_image):
+    aa3 = buf2rgb(train_image)
+    print(aa3.shape)
+    qq = qoi.encode(aa3)
+    print(qq)
+    zqq = zlib.compress(qq)
+    print(len(zqq))
+    aa1 = buf2grayscale(train_image)
+    for row in aa1:
+        print(''.join([
+            f'{p[0]:3d}'
+            for p in row
+        ]))
+    exit(0)
+
 
 def main():
     train_images = load_dataset(TRAIN_IMG_PATH, True, TRAIN_NUM_SAMPLES)
@@ -152,19 +167,7 @@ def main():
     test_images = load_dataset(TEST_IMG_PATH, True, TEST_NUM_SAMPLES)
     test_labels = load_dataset(TEST_LABEL_PATH, False, TEST_NUM_SAMPLES)
 
-    # aa3 = buf2rgb(train_images[0])
-    # print(aa3.shape)
-    # qq = qoi.encode(aa3)
-    # aa1 = buf2grayscale(train_images[0])
-    # print(aa1.shape)
-    # qq = qoi.encode(aa1)
-    # print(qq)
-    # for row in aa1:
-    #     print(''.join([
-    #         f'{p[0]:3d}'
-    #         for p in row
-    #     ]))
-    # print(train_labels[0])
+    # test(train_images[0])
 
     train_images = [
         qoi.encode(buf2rgb(x))
